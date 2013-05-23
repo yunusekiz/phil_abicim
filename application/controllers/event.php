@@ -39,9 +39,8 @@ class event extends CI_Controller {
 
 	public function getLastEvent()
 	{
-		$data = $this->event_model->getLastEvent();
+		 $data = $this->event_model->getLastEvent();
 
-		print_r($data);
 	}
 
 	public function insertMessage()

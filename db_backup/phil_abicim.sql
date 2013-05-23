@@ -3,7 +3,7 @@
 -- http://www.phpmyadmin.net
 --
 -- Anamakine: localhost
--- Üretim Zamanı: 22 Nis 2013, 07:50:17
+-- Üretim Zamanı: 23 May 2013, 16:31:07
 -- Sunucu sürümü: 5.5.25a
 -- PHP Sürümü: 5.4.4
 
@@ -19,6 +19,21 @@ SET time_zone = "+00:00";
 --
 -- Veritabanı: `phil_abicim`
 --
+
+-- --------------------------------------------------------
+
+--
+-- Tablo için tablo yapısı `answer`
+--
+
+CREATE TABLE IF NOT EXISTS `answer` (
+  `answer_id` int(11) NOT NULL AUTO_INCREMENT,
+  `answer_detail` text NOT NULL,
+  `answer_letter` text NOT NULL,
+  `question_id` int(11) NOT NULL,
+  PRIMARY KEY (`answer_id`),
+  KEY `question_id` (`question_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 AUTO_INCREMENT=1 ;
 
 -- --------------------------------------------------------
 
@@ -47,6 +62,25 @@ INSERT INTO `event` (`event_id`, `event_date`, `event_title`, `event_detail`, `e
 -- --------------------------------------------------------
 
 --
+-- Tablo için tablo yapısı `lecture`
+--
+
+CREATE TABLE IF NOT EXISTS `lecture` (
+  `lecture_id` int(11) NOT NULL AUTO_INCREMENT,
+  `lecture_name` text NOT NULL,
+  PRIMARY KEY (`lecture_id`)
+) ENGINE=InnoDB  DEFAULT CHARSET=utf8 AUTO_INCREMENT=5 ;
+
+--
+-- Tablo döküm verisi `lecture`
+--
+
+INSERT INTO `lecture` (`lecture_id`, `lecture_name`) VALUES
+(2, 'Türkçe');
+
+-- --------------------------------------------------------
+
+--
 -- Tablo için tablo yapısı `message`
 --
 
@@ -58,7 +92,7 @@ CREATE TABLE IF NOT EXISTS `message` (
   PRIMARY KEY (`message_id`),
   KEY `sender_id` (`sender_id`,`receiver_id`),
   KEY `receiver_id` (`receiver_id`)
-) ENGINE=InnoDB  DEFAULT CHARSET=utf8 AUTO_INCREMENT=12 ;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 AUTO_INCREMENT=1 ;
 
 -- --------------------------------------------------------
 
@@ -83,12 +117,56 @@ CREATE TABLE IF NOT EXISTS `msg_view_by_sender_id` (
 -- --------------------------------------------------------
 
 --
--- Görünüm yapısı durumu `ssn_view_by_teacher`
+-- Tablo için tablo yapısı `question`
 --
-CREATE TABLE IF NOT EXISTS `ssn_view_by_teacher` (
-`teacher_id` int(11)
-,`ss_number` bigint(12)
-);
+
+CREATE TABLE IF NOT EXISTS `question` (
+  `question_id` int(11) NOT NULL AUTO_INCREMENT,
+  `question_detail` text NOT NULL,
+  `subject_id` int(11) NOT NULL,
+  PRIMARY KEY (`question_id`),
+  KEY `subject_id` (`subject_id`)
+) ENGINE=InnoDB  DEFAULT CHARSET=utf8 AUTO_INCREMENT=4 ;
+
+--
+-- Tablo döküm verisi `question`
+--
+
+INSERT INTO `question` (`question_id`, `question_detail`, `subject_id`) VALUES
+(3, 'aşağıdakilerrin hangisi aşağıdadır', 11);
+
+-- --------------------------------------------------------
+
+--
+-- Tablo için tablo yapısı `ssn_view_by_teacher`
+--
+-- kullanımda(#1356 - View 'phil_abicim.ssn_view_by_teacher' references invalid table(s) or column(s) or function(s) or definer/invoker of view lack rights to use them)
+-- Veri okunması hatası: (#1356 - View 'phil_abicim.ssn_view_by_teacher' references invalid table(s) or column(s) or function(s) or definer/invoker of view lack rights to use them)
+
+-- --------------------------------------------------------
+
+--
+-- Tablo için tablo yapısı `subject`
+--
+
+CREATE TABLE IF NOT EXISTS `subject` (
+  `subject_id` int(11) NOT NULL AUTO_INCREMENT,
+  `subject_name` text NOT NULL,
+  `lecture_id` int(11) NOT NULL,
+  PRIMARY KEY (`subject_id`),
+  KEY `lecture_id` (`lecture_id`)
+) ENGINE=InnoDB  DEFAULT CHARSET=utf8 AUTO_INCREMENT=15 ;
+
+--
+-- Tablo döküm verisi `subject`
+--
+
+INSERT INTO `subject` (`subject_id`, `subject_name`, `lecture_id`) VALUES
+(10, 'anlatim bozukluklari', 2),
+(11, 'dilbilgisi', 2),
+(12, 'noktalama işaretleri', 2),
+(13, 'cümle bilgisi', 2);
+
 -- --------------------------------------------------------
 
 --
@@ -99,18 +177,52 @@ CREATE TABLE IF NOT EXISTS `teacher` (
   `teacher_id` int(11) NOT NULL AUTO_INCREMENT,
   `teacher_name` varchar(250) NOT NULL,
   `teacher_surname` varchar(250) NOT NULL,
-  `ss_number` bigint(12) NOT NULL,
+  `teacher_branch_id` int(11) NOT NULL,
+  `teacher_email` text NOT NULL,
+  `teacher_password` text NOT NULL,
   PRIMARY KEY (`teacher_id`),
-  KEY `ss_number` (`ss_number`)
-) ENGINE=InnoDB  DEFAULT CHARSET=utf8 AUTO_INCREMENT=3 ;
+  KEY `teacher_branch_id` (`teacher_branch_id`)
+) ENGINE=InnoDB  DEFAULT CHARSET=utf8 AUTO_INCREMENT=2 ;
 
 --
 -- Tablo döküm verisi `teacher`
 --
 
-INSERT INTO `teacher` (`teacher_id`, `teacher_name`, `teacher_surname`, `ss_number`) VALUES
-(1, 'cem ', 'balkan', 13368369400),
-(2, 'kamuran', 'akkor', 11368335700);
+INSERT INTO `teacher` (`teacher_id`, `teacher_name`, `teacher_surname`, `teacher_branch_id`, `teacher_email`, `teacher_password`) VALUES
+(1, 'ferit', 'akdeniz', 2, 'akdenizferit@gmail.com', '12345');
+
+-- --------------------------------------------------------
+
+--
+-- Görünüm yapısı durumu `teacher_brach_view`
+--
+CREATE TABLE IF NOT EXISTS `teacher_brach_view` (
+`teacher_id` int(11)
+,`teacher_name` varchar(250)
+,`teacher_surname` varchar(250)
+,`teacher_email` text
+,`teacher_password` text
+,`teacher_branch_id` int(11)
+,`teacher_branch_name` text
+);
+-- --------------------------------------------------------
+
+--
+-- Tablo için tablo yapısı `teacher_branch`
+--
+
+CREATE TABLE IF NOT EXISTS `teacher_branch` (
+  `teacher_branch_id` int(11) NOT NULL AUTO_INCREMENT,
+  `teacher_branch_name` text NOT NULL,
+  PRIMARY KEY (`teacher_branch_id`)
+) ENGINE=InnoDB  DEFAULT CHARSET=utf8 AUTO_INCREMENT=5 ;
+
+--
+-- Tablo döküm verisi `teacher_branch`
+--
+
+INSERT INTO `teacher_branch` (`teacher_branch_id`, `teacher_branch_name`) VALUES
+(2, 'Türkçe');
 
 -- --------------------------------------------------------
 
@@ -123,7 +235,7 @@ CREATE TABLE IF NOT EXISTS `user` (
   `user_name` varchar(50) NOT NULL,
   `user_email` varchar(200) NOT NULL,
   PRIMARY KEY (`user_id`)
-) ENGINE=InnoDB  DEFAULT CHARSET=utf8 AUTO_INCREMENT=12 ;
+) ENGINE=InnoDB  DEFAULT CHARSET=utf8 AUTO_INCREMENT=4 ;
 
 --
 -- Tablo döküm verisi `user`
@@ -155,11 +267,11 @@ CREATE ALGORITHM=UNDEFINED DEFINER=`root`@`localhost` SQL SECURITY DEFINER VIEW 
 -- --------------------------------------------------------
 
 --
--- Görünüm yapısı `ssn_view_by_teacher`
+-- Görünüm yapısı `teacher_brach_view`
 --
-DROP TABLE IF EXISTS `ssn_view_by_teacher`;
+DROP TABLE IF EXISTS `teacher_brach_view`;
 
-CREATE ALGORITHM=UNDEFINED DEFINER=`root`@`localhost` SQL SECURITY DEFINER VIEW `ssn_view_by_teacher` AS select `teacher`.`teacher_id` AS `teacher_id`,`teacher`.`ss_number` AS `ss_number` from `teacher`;
+CREATE ALGORITHM=UNDEFINED DEFINER=`root`@`localhost` SQL SECURITY DEFINER VIEW `teacher_brach_view` AS select `teacher`.`teacher_id` AS `teacher_id`,`teacher`.`teacher_name` AS `teacher_name`,`teacher`.`teacher_surname` AS `teacher_surname`,`teacher`.`teacher_email` AS `teacher_email`,`teacher`.`teacher_password` AS `teacher_password`,`teacher_branch`.`teacher_branch_id` AS `teacher_branch_id`,`teacher_branch`.`teacher_branch_name` AS `teacher_branch_name` from (`teacher` join `teacher_branch`) where (`teacher`.`teacher_branch_id` = `teacher_branch`.`teacher_branch_id`);
 
 --
 -- Dökümü yapılmış tablolar için kısıtlamalar
@@ -171,6 +283,24 @@ CREATE ALGORITHM=UNDEFINED DEFINER=`root`@`localhost` SQL SECURITY DEFINER VIEW 
 ALTER TABLE `message`
   ADD CONSTRAINT `message_ibfk_1` FOREIGN KEY (`sender_id`) REFERENCES `user` (`user_id`) ON DELETE CASCADE ON UPDATE CASCADE,
   ADD CONSTRAINT `message_ibfk_2` FOREIGN KEY (`receiver_id`) REFERENCES `user` (`user_id`) ON DELETE CASCADE ON UPDATE CASCADE;
+
+--
+-- Tablo kısıtlamaları `question`
+--
+ALTER TABLE `question`
+  ADD CONSTRAINT `question_ibfk_1` FOREIGN KEY (`subject_id`) REFERENCES `subject` (`subject_id`) ON DELETE CASCADE ON UPDATE CASCADE;
+
+--
+-- Tablo kısıtlamaları `subject`
+--
+ALTER TABLE `subject`
+  ADD CONSTRAINT `subject_ibfk_1` FOREIGN KEY (`lecture_id`) REFERENCES `lecture` (`lecture_id`) ON DELETE CASCADE ON UPDATE CASCADE;
+
+--
+-- Tablo kısıtlamaları `teacher`
+--
+ALTER TABLE `teacher`
+  ADD CONSTRAINT `teacher_ibfk_1` FOREIGN KEY (`teacher_branch_id`) REFERENCES `teacher_branch` (`teacher_branch_id`) ON DELETE CASCADE ON UPDATE CASCADE;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
 /*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
